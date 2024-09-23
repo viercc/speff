@@ -5,7 +5,8 @@ import           BenchCatch
 import           BenchCountdown
 import           BenchLocal
 import           BenchPyth
-import           BenchCoroutine
+import qualified BenchCoroutineStrict as CS
+import qualified BenchCoroutineLazy as CL
 import           Data.Functor     ((<&>))
 import           Test.Tasty.Bench
 
@@ -69,14 +70,24 @@ main = defaultMain
     , bench "sem.shallow" $ nf localSem x
     , bench "sem.deep" $ nf localSemDeep x
     ]
-  , bgroup "coroutine" $ [10000] <&> \x -> bgroup (show x)
-    [ bench "sp_modified_for_non_scoped_resumption_support.shallow" $ nf coroutineSp x
-    , bench "sp_modified_for_non_scoped_resumption_support.deep" $ nf coroutineSpDeep x
-    , bench "mp.shallow" $ nf coroutineMp x
-    , bench "mp.deep" $ nf coroutineMpDeep x
-    , bench "freer.shallow" $ nf coroutineFreer x
-    , bench "freer.deep" $ nf coroutineFreerDeep x
-    , bench "eff.shallow" $ nf coroutineEff x
-    , bench "eff.deep" $ nf coroutineEffDeep x
+  , bgroup "coroutine" $ [1000, 2000, 5000, 10000] <&> \x -> bgroup (show x)
+    [ bench "sp_modified_for_non_scoped_resumption_support.shallow" $ nf CL.coroutineSp x
+    , bench "sp_modified_for_non_scoped_resumption_support.deep" $ nf CL.coroutineSpDeep x
+    , bench "mp.shallow" $ nf CL.coroutineMp x
+    , bench "mp.deep" $ nf CL.coroutineMpDeep x
+    , bench "freer.shallow" $ nf CL.coroutineFreer x
+    , bench "freer.deep" $ nf CL.coroutineFreerDeep x
+    , bench "eff.shallow" $ nf CL.coroutineEff x
+    , bench "eff.deep" $ nf CL.coroutineEffDeep x
+    ]
+  , bgroup "coroutine_strict" $ [1000, 2000, 5000, 10000] <&> \x -> bgroup (show x)
+    [ bench "sp_modified_for_non_scoped_resumption_support.shallow" $ nf CS.coroutineSp x
+    , bench "sp_modified_for_non_scoped_resumption_support.deep" $ nf CS.coroutineSpDeep x
+    , bench "mp.shallow" $ nf CS.coroutineMp x
+    , bench "mp.deep" $ nf CS.coroutineMpDeep x
+    , bench "freer.shallow" $ nf CS.coroutineFreer x
+    , bench "freer.deep" $ nf CS.coroutineFreerDeep x
+    , bench "eff.shallow" $ nf CS.coroutineEff x
+    , bench "eff.deep" $ nf CS.coroutineEffDeep x
     ]
   ]
